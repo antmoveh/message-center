@@ -3,8 +3,11 @@ package main
 import (
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
-	"message-center/cmd/logic/config"
+	"message-center/pkg/configuration"
+	"message-center/pkg/email_client"
 	"message-center/pkg/logic-server/push"
+	"message-center/pkg/mongodb"
+	"message-center/pkg/mq"
 	"os"
 	"os/signal"
 	"syscall"
@@ -32,21 +35,36 @@ var runCommand = cli.Command{
 }
 
 func start() {
-	logrus.Info("加载配置")
-	_ = config.LoadConfig()
+	// logrus.Info("加载配置")
+	// _ = config.LoadConfig()
+	//
+	// logrus.Info("启动长连接管理服务")
+	// err := push.InitConnManager()
+	// if err != nil {
+	// 	logrus.Fatal("启动管理连接服务失败：" + err.Error())
+	// }
+	//
+	// logrus.Info("启动HTTP服务：127.0.0.1:7799")
+	//
+	// err = push.InitHttpService()
+	// if err != nil {
+	// 	logrus.Fatal("启动HTTP服务失败：" + err.Error())
+	// }
 
-	logrus.Info("启动长连接管理服务")
-	err := push.InitConnManager()
-	if err != nil {
-		logrus.Fatal("启动管理连接服务失败：" + err.Error())
-	}
+	logrus.Info("初始化apollo配置")
+	dcl := configuration.ApolloConfigurationProvider{}
+	dcl.Initialize()
 
-	logrus.Info("启动HTTP服务：127.0.0.1:7799")
+	logrus.Info("初始化activemq")
+	mqc := mq.MqController{}
+	mqc.Initialize(&dcl)
 
-	err = push.InitHttpService()
-	if err != nil {
-		logrus.Fatal("启动HTTP服务失败：" + err.Error())
-	}
+	logrus.Info("初始化mongodb连接")
+	mc := mongodb.MongoDBController{}
+	mc.Initialize(&dcl)
+
+	ec := email_client.NotificationManagerImple{}
+	ec.Initialize(&dcl)
 
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGHUP, syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT)
@@ -54,6 +72,7 @@ func start() {
 		select {
 		case <-sigCh:
 			logrus.Info("logic系统关闭")
+			mc.Close()
 			push.HttpServerClose()
 			push.GlobalConnectManager.MessageConnectClose()
 			return
