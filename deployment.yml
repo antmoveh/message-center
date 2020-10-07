@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: paasos-message-center
+  labels:
+    app: paasos-message-center
+  annotations:
+spec:
+  ports:
+  - name: paasos-message-center
+    port: 32777
+    protocol: TCP
+    targetPort: 7777
+  selector:
+    app: paasos-message-center
+  type: NodePort
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: paasos-message-center
+  labels:
+    app: paasos-message-center
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: paasos-message-center
+  template:
+    metadata:
+      labels:
+        app: paasos-message-center
+    spec:
+      containers:
+      - image: {{image}}
+        env:
+        - name: CONFIG_SERVER
+          value: http://apolloconfig.*******.com:30002
+        - name: ENV
+          value: e4
+        imagePullPolicy: 'Always'
+        name: paasos-message-center
+        - containerPort: 7777
+        - containerPort: 7799
+      imagePullSecrets:
+      - name: myregistrykey

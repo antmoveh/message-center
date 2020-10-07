@@ -6,7 +6,6 @@ require (
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-stomp/stomp v2.0.6+incompatible
 	github.com/gorilla/websocket v1.4.2
-	github.com/jordan-wright/email v4.0.1-0.20200824153738-3f5bafa1cd84+incompatible
 	github.com/prometheus/common v0.4.0
 	github.com/shima-park/agollo v1.2.7
 	github.com/sirupsen/logrus v1.2.0
