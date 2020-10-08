@@ -12,8 +12,8 @@ ENV WORKSPACE=/data/workspace
 WORKDIR $WORKSPACE
 
 RUN cd message-center && echo Commit: `git log --pretty='%s%b%B' -n 1`
-RUN cd $WORKSPACE/$LOGICPATH && go build -gcflags '-N -l' -o /tmp/logic .
-RUN cd $WORKSPACE/$MESSAGEPATH && go build -gcflags '-N -l' -o /tmp/message .
+RUN cd $WORKSPACE/$LOGICPATH && go build -gcflags '-N -l' -o /tmp/logic-server .
+RUN cd $WORKSPACE/$MESSAGEPATH && go build -gcflags '-N -l' -o /tmp/message-server .
 
 FROM alpine:latest
 COPY --from=builder /tmp/logic /
@@ -23,8 +23,8 @@ COPY --from=builder /data/workspacemessage-center/run.sh /
 #Update time zone to Asia-Shanghai
 COPY --from=builder /data/workspace/message-center/Shanghai /etc/localtime
 RUN echo 'Asia/Shanghai' > /etc/timezone
-RUN chmod +x /logic
-RUN chmod +x /message
+RUN chmod +x /logic-server
+RUN chmod +x /message-server
 RUN chmod +x /run.sh
 
 EXPOSE 7777

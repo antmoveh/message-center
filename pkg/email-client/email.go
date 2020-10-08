@@ -10,12 +10,12 @@ import (
 	"strings"
 )
 
-type NotificationInterface interface {
+type EmailClient interface {
 	// 发送邮件
 	SendEmail(nickname, subject, message string, receive Receive) error
 }
 
-type NotificationManagerImple struct {
+type EmailClientImpl struct {
 	user     string
 	password string
 	host     string
@@ -40,14 +40,14 @@ type (
 	}
 )
 
-func (p *NotificationManagerImple) Initialize(dcl configuration.ConfigurationLoader) {
+func (p *EmailClientImpl) Initialize(dcl configuration.ConfigurationLoader) {
 	p.user = dcl.GetField("DevOps.Mgmt.API", "Email_SMTPSender")
 	p.password = dcl.GetField("DevOps.Mgmt.API", "Email_SMTPPassword")
 	p.host = dcl.GetField("DevOps.Mgmt.API", "Email_SMTPHost")
 	p.port = dcl.GetField("DevOps.Mgmt.API", "Email_SMTPPort")
 }
 
-func (p *NotificationManagerImple) SendEmail(nickname, subject, message string, receive Receive) error {
+func (p *EmailClientImpl) SendEmail(nickname, subject, message string, receive Receive) error {
 	var toEmail []string
 	toEmail = append(toEmail, receive.Ccer...)
 	toEmail = append(toEmail, receive.Recipients...)

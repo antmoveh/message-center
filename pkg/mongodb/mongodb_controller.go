@@ -39,5 +39,4 @@ func (mc *MongoDBController) NewStrongSession() *mgo.Session {
 
 func (mc *MongoDBController) Close() {
 	mc.rootSession.Close()
-	mc.NewStrongSession()
 }

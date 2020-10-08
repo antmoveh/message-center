@@ -4,10 +4,10 @@
 #set -m
 
 # Start the primary process and put it in the background
-nohup ./message >>/tmp/message.log 2>&1 &
+nohup ./message-server run >>/tmp/message.log 2>&1 &
 
 # Start the helper process
-nohup ./logic >>/tmp/logic.log 2>&1 &
+nohup ./logic-server run >>/tmp/logic.log 2>&1 &
 
 # the my_helper_process might need to know how to wait on the
 # primary process to start before it does its work and returns
@@ -18,9 +18,9 @@ nohup ./logic >>/tmp/logic.log 2>&1 &
 #fg %1
 
 while sleep 30; do
-  ps aux |grep message |grep -v grep >/dev/null 2>&1
+  ps aux |grep message-server |grep -v grep >/dev/null 2>&1
   PROCESS_1_STATUS=$?
-  ps aux |grep logic |grep -v grep >/dev/null 2>&1
+  ps aux |grep logic-server |grep -v grep >/dev/null 2>&1
   PROCESS_2_STATUS=$?
   # If the greps above find anything, they exit with 0 status
   # If they are not both 0, then something is wrong

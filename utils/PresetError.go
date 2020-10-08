@@ -21,3 +21,12 @@ var (
 
 	LogicDisPatchChannelFull = errors.New("logic dispatch channel full")
 )
+
+func Contains(arr []string, value string) bool {
+	for i := 0; i < len(arr); i++ {
+		if arr[i] == value {
+			return true
+		}
+	}
+	return false
+}
