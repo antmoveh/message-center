@@ -8,7 +8,8 @@ metadata:
 spec:
   ports:
   - name: paasos-message-center
-    port: 32777
+    nodePort: 32777
+    port: 7777
     protocol: TCP
     targetPort: 7777
   selector:
@@ -41,7 +42,8 @@ spec:
           value: e4
         imagePullPolicy: 'Always'
         name: paasos-message-center
-        - containerPort: 7777
-        - containerPort: 7799
+        - ports:
+          - containerPort: 7777
+          - containerPort: 7799
       imagePullSecrets:
       - name: myregistrykey
