@@ -109,8 +109,10 @@ func (worker *MergeWorker) mergeWorkerMain() {
 			}
 		}
 		// 提交批次
-		_ = worker.commitBatch(batch)
-		logrus.Warn("提交批次失败")
+		err := worker.commitBatch(batch)
+		if err != nil {
+			logrus.Warn("提交批次失败")
+		}
 	}
 }
 

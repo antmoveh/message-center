@@ -2,7 +2,9 @@ package web_socket
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/websocket"
+	"github.com/sirupsen/logrus"
 	"message-center/cmd/message/config"
 	"message-center/pkg/types"
 	"message-center/utils"
@@ -159,6 +161,7 @@ func (wsConnection *WSConnection) handleJoin(bizReq *types.BizMessage) (bizResp 
 	}
 	// 建立连接 -> 房间的关系
 	wsConnection.rooms[bizJoinData.Room] = true
+	logrus.Info(fmt.Sprintf("%d加入房间%s", wsConnection.connId, bizJoinData.Room))
 	return
 }
 
@@ -187,6 +190,7 @@ func (wsConnection *WSConnection) handleLeave(bizReq *types.BizMessage) (bizResp
 	}
 	// 删除连接 -> 房间的关系
 	delete(wsConnection.rooms, bizLeaveData.Room)
+	logrus.Info(fmt.Sprintf("%d离开房间%s", wsConnection.connId, bizLeaveData.Room))
 	return
 }
 
